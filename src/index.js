@@ -1,29 +1,72 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
 
-class Toggle extends React.Component {
+function GuestGreeting(props) {
+  return <h1>Please sign up.</h1>;
+}
+
+function LoginButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Login
+    </button>
+  );
+}
+
+function LogoutButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Logout
+    </button>
+  );
+}
+
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+
+class LoginControl extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isToggleOn: true};
+    this.state = {isLoggedIn: false};
   }
 
-  handleClick = () => {
-    this.setState(prevState => ({
-      isToggleOn: !prevState.isToggleOn
-    }));
+  handleLoginClick = () => {
+    this.setState({isLoggedIn: true});
+  }
+
+  handleLogoutClick = () => {
+    this.setState({isLoggedIn: false});
   }
 
   render() {
+    const isLoggedIn = this.state.isLoggedIn;
+
+    let button = null;
+    if (isLoggedIn) {
+      button = <LogoutButton onClick={this.handleLogoutClick} />;
+    } else {
+      button = <LoginButton onClick={this.handleLoginClick} />;
+    }
+
     return (
-      <button onClick={this.handleClick}>
-        {this.state.isToggleOn ? 'ON' : 'OFF'}
-      </button>
+      <div>
+        <Greeting isLoggedIn={isLoggedIn} />
+        {button}
+      </div>
     );
   }
 }
 
 ReactDOM.render(
-  <Toggle />,
+  <LoginControl />,
   document.getElementById('root')
 );
