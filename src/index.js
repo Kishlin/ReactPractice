@@ -1,43 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-function WarningBanner(props) {
-  if (!props.warn) {
-    return null;
-  }
-
+function Blog(props) {
   return (
-    <div className="warning">
-      Warning!
+    <div>
+      {props.posts.map((post) =>
+        <li key={post.id}>
+          {post.title}
+        </li>
+      )}
+      <hr />
+      {props.posts.map((post) =>
+    <div key={post.id}>
+      <h3>{post.title}</h3>
+      <p>{post.content}</p>
+    </div>
+  )}
     </div>
   );
 }
 
-class Page extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {showWarning: true}
-  }
-
-  handleToggleClick = () => {
-    this.setState(prevState => ({
-      showWarning: !prevState.showWarning
-    }));
-  }
-
-  render() {
-    return (
-      <div>
-        <WarningBanner warn={this.state.showWarning} />
-        <button onClick={this.handleToggleClick}>
-          {this.state.showWarning ? 'Hide' : 'Show'}
-        </button>
-      </div>
-    );
-  }
-}
-
+const posts = [
+  {id: 1, title: 'Hello World', content: 'Welcome to learning React!'},
+  {id: 2, title: 'Installation', content: 'You can install React from npm.'}
+];
 ReactDOM.render(
-  <Page />,
+  <Blog posts={posts} />,
   document.getElementById('root')
 );
