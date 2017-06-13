@@ -1,53 +1,82 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-class Reservation extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isGoing: true,
-      numberOfGuests: 2
-    };
+const scaleNames = {
+	c: 'Celsius',
+	f: 'Fahrenheit'
+};
 
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
+function toCelsius(fahrenheit) {
+	return (fahrenheit - 32) * 5 / 9;
+}
 
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+function toFahrenheit(celsius) {
+	return (celsius * 9 / 5) + 32;
+}
 
-    this.setState({
-      [name]: value
-    });
-  }
+function BoilingVerdict(props) {
+	if (props.celsius >= 100) {
+		return <p>The water would boil.</p>;
+	}
+	return <p>The water would not boil.</p>;
+}
 
-  render() {
-    return (
-      <form>
-        <label>
-          Is going:
-          <input
-            name="isGoing"
-            type="checkbox"
-            checked={this.state.isGoing}
-            onChange={this.handleInputChange} />
-        </label>
-        <br />
-        <label>
-          Number of guests:
-          <input
-            name="numberOfGuests"
-            type="number"
-            value={this.state.numberOfGuests}
-            onChange={this.handleInputChange} />
-        </label>
-      </form>
-    );
-  }
+class TemperatureInput extends React.Component {
+	render() {
+		const temperature = this.props.temperature;
+		const scale = this.props.scale;
+		return (
+			<fieldset>
+			<legend>Enter temperature in {scaleNames[scale]}:</legend>
+			<input value={temperature}
+			onChange={this.props.callback} />
+			</fieldset>
+		);
+	}
+}
+
+class Calculator extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			temperatureCelsius:   '',
+			temperatureFarenheit: ''
+		};
+	}
+
+	changeTemperatureCelcius = (e) => {
+		let celsius = e.target.value;
+		let farenheit = toFahrenheit(celsius);
+
+		this.setState({
+			'temperatureCelsius': celsius, 
+			'temperatureFarenheit': farenheit
+		});
+	}
+
+	changeTemperatureFahrenheit = (e) => {
+		let farenheit = e.target.value;
+		let celsius = toCelsius(farenheit);
+
+		this.setState({
+			'temperatureCelsius': celsius, 
+			'temperatureFarenheit': farenheit
+		});
+	}
+
+	render() {
+		const temperature = this.state.temperature;
+		return (
+			<div>
+			<TemperatureInput scale="c" temperature={this.state.temperatureCelsius} callback={(e) => this.changeTemperatureCelcius(e)} />
+			<TemperatureInput scale="f" temperature={this.state.temperatureFarenheit} callback={(e) => this.changeTemperatureFahrenheit(e)} />
+			<BoilingVerdict celsius={this.state.temperatureCelsius} />
+			</div>
+		);
+	}
 }
 
 ReactDOM.render(
-  <Reservation />,
-  document.getElementById('root')
+	<Calculator />,
+	document.getElementById('root')
 );
